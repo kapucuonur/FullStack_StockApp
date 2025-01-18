@@ -1,5 +1,9 @@
 # STOCK MANAGEMENT API
 
+## Deployment Link
+
+[View Deployment](https://fullstack-stockapp-wfdx.onrender.com/)
+
 ### ERD:
 
 ![ERD](./erdStockAPI.png)
