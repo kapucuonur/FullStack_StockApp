@@ -8,7 +8,7 @@
     "start": "nodemon",
     "debug": "DEBUG=express nodemon",
     "server": "nodemon index",
-    "setup-production": "npm i && cd client && npm i && npm run build && npm run rename",
+    "setup-production": "npm i && cd client && npm i && npm run build && npm run rename1",
     "dev": "node swaggerAutogen && nodemon index.js"
   },
   "keywords": [],
