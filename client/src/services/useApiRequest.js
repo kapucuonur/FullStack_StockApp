@@ -1,4 +1,5 @@
-// import axios from "axios"
+// useApiRequest.js
+
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify"
 import {
   fetchFail,
@@ -7,31 +8,36 @@ import {
   registerSuccess,
   logoutSuccess,
 } from "../features/authSlice"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import useAxios from "./useAxios"
 
 //?Custom hook
-//? Eger uygulamanın her yerinde kullanmak için bazı fonksiyonlara ihtyaç varsa  ve bu fonksiyonlar içerisinde custom hook'ların ( useSelector, useDispatch,useNavigate etc.) kullanılması gerekiyorsa o Zaman çözüm Bu dosyayı custom hook'a çevirmektir.
-
 const useApiRequest = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { axiosToken, axiosPublic } = useAxios()
-  // const { token } = useSelector((state) => state.auth)
+ 
   const login = async (userData) => {
-    //   const BASE_URL = "https://10001.fullstack.clarusway.com"
-
     dispatch(fetchStart())
     try {
-      // const { data } = await axios.post(
-      //   `${process.env.REACT_APP_BASE_URL}/auth/login`,
-      //   userData
-      // )
       const { data } = await axiosPublic.post("/auth/login/", userData)
-      dispatch(loginSuccess(data))
-      toastSuccessNotify("Login işlemi başarılı")
-      navigate("/stock")
+      
+      // 🚨 GÜVENLİK DÜZELTMESİ: Veriyi Redux'a göndermeden önce yapıyı kontrol et
+      // Backend'den gelen veri bazen 'data' bazen de 'user' içinde olabilir
+      const payloadData = data?.user || data?.data || data; 
+
+      if (payloadData && payloadData.username) {
+        dispatch(loginSuccess(data)) // Tüm data nesnesini Redux'a gönder
+        toastSuccessNotify("Login işlemi başarılı")
+        navigate("/stock")
+      } else {
+        // Eğer kullanıcı adı eksikse, kullanıcıya bildirim göster.
+        dispatch(fetchFail());
+        toastErrorNotify("Login başarılı ancak kullanıcı verisi eksik.");
+        console.error("Backend yanıtında kullanıcı adı eksik:", data);
+      }
+
     } catch (error) {
       dispatch(fetchFail())
       toastErrorNotify("Login başarısız oldu")
@@ -42,27 +48,39 @@ const useApiRequest = () => {
   const register = async (userInfo) => {
     dispatch(fetchStart())
     try {
-      // const { data } = await axios.post(
-      //   `${process.env.REACT_APP_BASE_URL}/users/`,
-      //   userInfo
-      // )
       const { data } = await axiosPublic.post("/users/", userInfo)
-      dispatch(registerSuccess(data))
-      navigate("/stock")
+      
+      // 🚨 GÜVENLİK DÜZELTMESİ: Yapı kontrolü
+      const payloadData = data?.user || data?.data || data;
+
+      if (payloadData && payloadData.username) {
+        dispatch(registerSuccess(data)) // Tüm data nesnesini Redux'a gönder
+        toastSuccessNotify("Kayıt başarılı, yönlendiriliyor...");
+        navigate("/stock")
+      } else {
+         dispatch(fetchFail());
+         toastErrorNotify("Kayıt başarılı ancak kullanıcı verisi eksik.");
+         console.error("Backend yanıtında kullanıcı adı eksik:", data);
+      }
+      
     } catch (error) {
       dispatch(fetchFail())
+      toastErrorNotify("Kayıt başarısız oldu");
+      console.log(error);
     }
   }
+  
   const logout = async () => {
     dispatch(fetchStart())
     try {
-      // await axios(`${process.env.REACT_APP_BASE_URL}/auth/logout`, {
-      //   headers: { Authorization: `Token ${token}` },
-      // })
       await axiosToken.get("/auth/logout")
       dispatch(logoutSuccess())
+      toastSuccessNotify("Çıkış başarılı");
+      navigate("/"); // Çıkıştan sonra ana sayfaya yönlendir
     } catch (error) {
       dispatch(fetchFail())
+      toastErrorNotify("Çıkış başarısız oldu");
+      console.log(error);
     }
   }
 

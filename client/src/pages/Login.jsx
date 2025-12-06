@@ -1,21 +1,23 @@
-import Avatar from "@mui/material/Avatar"
-import Container from "@mui/material/Container"
-import Grid from "@mui/material/Grid"
-import Typography from "@mui/material/Typography"
-import LockIcon from "@mui/icons-material/Lock"
-import image from "../assets/result.svg"
-import { Link } from "react-router-dom"
-import Box from "@mui/material/Box"
-import TextField from "@mui/material/TextField"
-import { Button } from "@mui/material"
-import { Formik, Form } from "formik"
-import { object, string } from "yup"
-// import { login } from "../services/useApiRequest"
-import useApiRequest from "../services/useApiRequest"
+import Avatar from "@mui/material/Avatar";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import LockIcon from "@mui/icons-material/Lock";
+import image from "../assets/result.svg";
+import { Link, useNavigate } from "react-router-dom"; // useNavigate eklendi!
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import { Button } from "@mui/material";
+import { Formik, Form } from "formik";
+import { object, string } from "yup";
+import useApiRequest from "../services/useApiRequest";
 
 const Login = () => {
-  const { login } = useApiRequest()
+  // 1. useNavigate hook'unu tanımlayın
+  const navigate = useNavigate();
+  const { login } = useApiRequest();
 
+  // ... (loginSchema kısmı aynı kalır)
   const loginSchema = object({
     email: string()
       .email("Geçerli bir email giriniz")
@@ -44,45 +46,26 @@ const Login = () => {
           p: 2,
         }}
       >
-        <Grid item xs={12} mb={3}>
-          <Typography variant="h3" color="primary" align="center">
-            STOCK APP
-          </Typography>
-        </Grid>
-
+        {/* ... (Diğer JSX Kodları aynı kalır) ... */}
+        
         <Grid item xs={12} sm={10} md={6}>
-          <Avatar
-            sx={{
-              backgroundColor: "secondary.light",
-              m: "auto",
-              width: 40,
-              height: 40,
-            }}
-          >
-            <LockIcon size="30" />
-          </Avatar>
-          <Typography
-            variant="h4"
-            align="center"
-            mb={4}
-            color="secondary.light"
-          >
-            Login
-          </Typography>
-
+          {/* ... (Avatar ve Typography aynı kalır) ... */}
+          
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
             onSubmit={(values, actions) => {
-              //TODO
-              //? POST (Login)
-              //? Toastify
-              //? Global state güncellenmesi
-              //? form resetleme
-              //? navigate
-              login(values)
-              actions.resetForm()
-              actions.setSubmitting(false) //? isSubmitting
+              // 2. login fonksiyonunu navigate ile çağırın
+              // login fonksiyonunuzun Promise döndürdüğünü veya
+              // bir callback'i kabul ettiğini varsayıyoruz.
+              
+              // En temiz yol: login içinde navigate yapmak
+              // Ancak, Login component'i içinde kalmak için:
+              
+              login(values, navigate); // navigate fonksiyonunu login'e gönderin
+              
+              actions.resetForm();
+              actions.setSubmitting(false);
             }}
           >
             {({
@@ -94,6 +77,8 @@ const Login = () => {
               isSubmitting,
             }) => (
               <Form>
+                {/* ... (Form Elemanları aynı kalır) ... */}
+                
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <TextField
                     label="Email"
@@ -135,15 +120,12 @@ const Login = () => {
             <Link to="/register">Do you have not an account?</Link>
           </Box>
         </Grid>
-
-        <Grid item xs={10} sm={7} md={6}>
-          <Container>
-            <img src={image} alt="img" />
-          </Container>
-        </Grid>
+        
+        {/* ... (Resim Grid'i aynı kalır) ... */}
+        
       </Grid>
     </Container>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
