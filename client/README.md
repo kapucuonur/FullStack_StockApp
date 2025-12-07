@@ -1,53 +1,72 @@
-# intallation
+# Installation
 
-## npm install or yarn
+## Install
 
-### npm start or yarn
+```bash
+npm install
+# or
+yarn
+```
 
-## npm run build or yarn build
+## Run (development)
 
-## libraries
+```bash
+npm start
+# or
+yarn start
+```
+
+## Build (production)
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+## Libraries used
 
 - @reduxjs/toolkit
 - react-redux
 - axios
 - react-router-dom
-- @mui/material-ui
+- @mui/material
 - @emotion/react
 - @emotion/styled
 
-## Tools to Use
-
-- Redux Dev Tools: It is a browser extension that works on Chrome and allows tracking of all changes made to the global state. To download [click.](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?utm_source=chrome-ntp-icon)`
-
-## Live Example of the Application:
+## Live Example of the Application
 
 https://stock-qg9tfa1ph-kapucuonurs-projects.vercel.app/
 
-## Functions of the 'npm run build Command:
+## Production environment / Deploy notes
 
-- Minification:
-  The process of minimizing the code by removing unnecessary spaces, comments, and long variable names.
-  JavaScript and CSS files are compressed to reduce the size of your code. This reduces page load times and improves overall performance.
+- The client expects an environment variable named `REACT_APP_BASE_URL` at build time. Set it to your backend API base URL (include the `/api/v1` suffix), for example:
 
-- Optimizing Complex File Paths:
-  File paths and names are optimized. Every part of your application is properly organized for faster loading and caching.
+  `REACT_APP_BASE_URL=https://your-backend.example.com/api/v1`
 
-- Generating Static Files:
-  Static files such as HTML, CSS, JavaScript, and media files are put together in the build folder. This folder contains the files that will be deployed for production.
+- On platforms like Render or Vercel, add the above environment variable in the project's Settings → Environment before building.
 
-- Compiling Application Code:
-  JSX and modern JavaScript features are converted to standard JavaScript for wider browser compatibility.
+- To build locally with a custom backend URL run:
 
-- Efficiency and Performance Improvements:
-  Webpack and other build tools perform various optimizations to make the code work more efficiently.
+```bash
+# from the `client` folder
+REACT_APP_BASE_URL=https://your-backend.example.com/api/v1 npm run build
+```
 
-## JavaScript as an Interpreted Language
+- If you deploy the frontend and backend on different hosts, the frontend must be built with the backend URL so API calls go to the correct origin.
 
-Transpiling: Languages ​​or extensions such as Modern JavaScript (ES6+), JSX, TypeScript are converted to older or standard JavaScript code. This is usually done by Babel or TypeScript compilers.
+- For same-origin deployments (serving static build from the backend server), the default `REACT_APP_BASE_URL` is `/api/v1` and no extra config is required.
 
-- Bundling: The process of combining code into a single file (or multiple files) instead of multiple files. This is done by tools such as Webpack or Rollup.
+## Add `.env` (development)
 
-- Interpreted Language: JavaScript is traditionally considered an interpreted language because the code is executed line-by-line or statement-by-statement by the JavaScript engine in the browser or runtime environment. The JavaScript engine reads the code, interprets it, and executes it directly without the need for a separate compilation step.
+- For local development you can create `client/.env` with:
 
-- Dynamic Execution: JavaScript is executed dynamically at runtime, meaning that code can be modified and executed on the fly. This dynamic nature is a characteristic of interpreted languages.
+```
+REACT_APP_BASE_URL=http://localhost:10000/api/v1
+```
+
+Make sure `client/.env` is listed in `.gitignore` (it is), and do not commit secrets to the repo.
+
+## Notes about build-time envs
+
+- React reads `REACT_APP_` environment variables at build time and bakes them into the bundle. Changing runtime envs on the static server will not change the built API base — rebuild is required after changing `REACT_APP_BASE_URL`.
