@@ -4,15 +4,22 @@ import { useSelector } from "react-redux"
 const useAxios = () => {
   const { token } = useSelector((state) => state.auth)
 
+  // Token gerektiren instance
   const axiosToken = axios.create({
-    // baseURL: `${process.env.REACT_APP_BASE_URL}`,
-    baseURL:"/api/v1",
-    headers: { Authorization: `Token ${token}` },
+    baseURL: "/api/v1",
   })
 
+  // ✅ Interceptor ile Authorization header ekle
+  axiosToken.interceptors.request.use((config) => {
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  })
+
+  // Public instance (login/register gibi)
   const axiosPublic = axios.create({
-    // baseURL: `${process.env.REACT_APP_BASE_URL}`,
-    baseURL:"/api/v1",
+    baseURL: "/api/v1",
   })
 
   return { axiosToken, axiosPublic }

@@ -1,4 +1,3 @@
-// import axios from "axios"
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify"
 import {
   fetchFail,
@@ -7,62 +6,56 @@ import {
   registerSuccess,
   logoutSuccess,
 } from "../features/authSlice"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import useAxios from "./useAxios"
-
-//?Custom hook
-//? Eger uygulamanın her yerinde kullanmak için bazı fonksiyonlara ihtyaç varsa  ve bu fonksiyonlar içerisinde custom hook'ların ( useSelector, useDispatch,useNavigate etc.) kullanılması gerekiyorsa o Zaman çözüm Bu dosyayı custom hook'a çevirmektir.
 
 const useApiRequest = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { axiosToken, axiosPublic } = useAxios()
-  // const { token } = useSelector((state) => state.auth)
-  const login = async (userData) => {
-    //   const BASE_URL = "https://10001.fullstack.clarusway.com"
 
+  // LOGIN
+  const login = async (userData) => {
     dispatch(fetchStart())
     try {
-      // const { data } = await axios.post(
-      //   `${process.env.REACT_APP_BASE_URL}/auth/login`,
-      //   userData
-      // )
-      const { data } = await axiosPublic.post("/auth/login/", userData)
+      const { data } = await axiosPublic.post("/auth/login", userData)
       dispatch(loginSuccess(data))
       toastSuccessNotify("Login işlemi başarılı")
       navigate("/stock")
     } catch (error) {
       dispatch(fetchFail())
       toastErrorNotify("Login başarısız oldu")
-      console.log(error)
+      console.error(error)
     }
   }
 
+  // REGISTER
   const register = async (userInfo) => {
     dispatch(fetchStart())
     try {
-      // const { data } = await axios.post(
-      //   `${process.env.REACT_APP_BASE_URL}/users/`,
-      //   userInfo
-      // )
-      const { data } = await axiosPublic.post("/users/", userInfo)
+      const { data } = await axiosPublic.post("/auth/register", userInfo)
       dispatch(registerSuccess(data))
+      toastSuccessNotify("Register işlemi başarılı")
       navigate("/stock")
     } catch (error) {
       dispatch(fetchFail())
+      toastErrorNotify("Register başarısız oldu")
+      console.error(error)
     }
   }
+
+  // LOGOUT
   const logout = async () => {
     dispatch(fetchStart())
     try {
-      // await axios(`${process.env.REACT_APP_BASE_URL}/auth/logout`, {
-      //   headers: { Authorization: `Token ${token}` },
-      // })
       await axiosToken.get("/auth/logout")
       dispatch(logoutSuccess())
+      toastSuccessNotify("Logout başarılı")
     } catch (error) {
       dispatch(fetchFail())
+      toastErrorNotify("Logout başarısız oldu")
+      console.error(error)
     }
   }
 
