@@ -143,3 +143,5 @@ dist
 
 .env
 .env-sample
+# Ignore client environment file
+client/.env
