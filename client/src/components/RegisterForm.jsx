@@ -4,17 +4,17 @@ import TextField from "@mui/material/TextField"
 import { Form } from "formik"
 import { object, string } from "yup"
 
+// ✅ Backend model ile uyumlu schema
 export const registerSchema = object({
   username: string()
-    .max(20, "Kullanıcı adı 10 karakterden az olmalıdır.")
+    .max(20, "Kullanıcı adı 20 karakterden az olmalıdır.")
     .required("Kullanıcı adı zorunludur"),
-  firstName: string()
+  name: string()
     .max(20, "İsim 20 karakterden az olmalıdır.")
     .required("İsim zorunludur"),
-  lastName: string()
-    .max(20, "Soyisim 30 karakterden az olmalıdır.")
+  lastname: string()
+    .max(30, "Soyisim 30 karakterden az olmalıdır.")
     .required("Soyisim zorunludur"),
-
   email: string()
     .email("Lütfen geçerli bir email giriniz.")
     .required("Email zorunludur"),
@@ -25,7 +25,7 @@ export const registerSchema = object({
     .matches(/\d+/, "Şifre bir sayı içermelidir")
     .matches(/[a-z]/, "Şifre bir küçük harf içermelidir")
     .matches(/[A-Z]/, "Şifre bir büyük harf içermelidir")
-    .matches(/[!/[@$!%*?&]+/, "Şifre bir özel karakter içermelidir"),
+    .matches(/[@$!%*?&]+/, "Şifre bir özel karakter içermelidir"),
 })
 
 const RegisterForm = ({
@@ -41,7 +41,7 @@ const RegisterForm = ({
         <TextField
           label="User Name"
           name="username"
-          id="userName"
+          id="username"
           type="text"
           variant="outlined"
           value={values.username}
@@ -51,28 +51,28 @@ const RegisterForm = ({
           helperText={touched.username && errors.username}
         />
         <TextField
-          label="First Name"
-          name="firstName"
-          id="firstName"
+          label="Name"
+          name="name"          // ✅ backend modeldeki alan
+          id="name"
           type="text"
           variant="outlined"
-          value={values.firstName}
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={touched.firstName && Boolean(errors.firstName)}
-          helperText={touched.firstName && errors.firstName}
+          error={touched.name && Boolean(errors.name)}
+          helperText={touched.name && errors.name}
         />
         <TextField
-          label="Last Name"
-          name="lastName"
-          id="lastName"
+          label="Lastname"
+          name="lastname"      // ✅ backend modeldeki alan
+          id="lastname"
           type="text"
           variant="outlined"
-          value={values.lastName}
+          value={values.lastname}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={touched.lastName && Boolean(errors.lastName)}
-          helperText={touched.lastName && errors.lastName}
+          error={touched.lastname && Boolean(errors.lastname)}
+          helperText={touched.lastname && errors.lastname}
         />
         <TextField
           label="Email"
@@ -87,7 +87,7 @@ const RegisterForm = ({
           helperText={touched.email && errors.email}
         />
         <TextField
-          label="password"
+          label="Password"
           name="password"
           id="password"
           type="password"
