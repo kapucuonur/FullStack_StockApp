@@ -38,8 +38,14 @@ const useApiRequest = () => {
       // log status and payload to help debugging in production
       // eslint-disable-next-line no-console
       console.log("login: server response.status:", response?.status)
-      // eslint-disable-next-line no-console
-      console.log("login: server payload:", payload)
+      // stringify payload so we can see nested structure in production logs
+      try {
+        // eslint-disable-next-line no-console
+        console.log("login: server payload:", JSON.stringify(payload))
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log("login: server payload (raw):", payload)
+      }
 
       // Small debug toast: show payload user and store user for quick verification.
       // Do not expose full tokens — only show username and token length for safety.
