@@ -32,10 +32,12 @@ const useApiRequest = () => {
       dispatch(loginSuccess(data))
       toastSuccessNotify("Login işlemi başarılı")
       navigate("/stock")
+      return true
     } catch (error) {
       dispatch(fetchFail())
       toastErrorNotify("Login başarısız oldu")
       console.log(error)
+      return false
     }
   }
 

@@ -73,15 +73,15 @@ const Login = () => {
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
-            onSubmit={(values, actions) => {
+            onSubmit={async (values, actions) => {
               //TODO
               //? POST (Login)
               //? Toastify
               //? Global state güncellenmesi
               //? form resetleme
               //? navigate
-              login(values)
-              actions.resetForm()
+              const ok = await login(values)
+              if (ok) actions.resetForm()
               actions.setSubmitting(false) //? isSubmitting
             }}
           >
