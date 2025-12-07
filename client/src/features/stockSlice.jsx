@@ -19,37 +19,26 @@ const stockSlice = createSlice({
       state.loading = true
       state.error = false
     },
-    // getFirmsSuccess: (state, { payload }) => {
-    //   state.loading = false
-    //   state.firms = payload
-    // },
-    // getSalesSuccess: (state, { payload }) => {
-    //   state.loading = false
-    //   state.sales = payload
-    // },
-
-    //? action.payload.path
-    // getStockSuccess: (state, action) => {
-    //   state.loading = false
-    //   state[action.payload.path] = action.payload.stockData
-    // },
 
     getStockSuccess: (state, { payload: { path, stockData } }) => {
       state.loading = false
       state[path] = stockData
-      // state.error = false
+      state.error = false
     },
 
     getProPurBraFirmSuccess: (
       state,
-      { payload: { products, purchases, firms, brands } }
+      { payload: { products, purchases, firms, brands, categories } }
     ) => {
       state.loading = false
       state.products = products
       state.purchases = purchases
       state.brands = brands
       state.firms = firms
+      if (categories) state.categories = categories
+      state.error = false
     },
+
     fetchFail: (state) => {
       state.loading = false
       state.error = true
@@ -59,8 +48,6 @@ const stockSlice = createSlice({
 
 export const {
   fetchStart,
-  getFirmsSuccess,
-  getSalesSuccess,
   getStockSuccess,
   getProPurBraFirmSuccess,
   fetchFail,
