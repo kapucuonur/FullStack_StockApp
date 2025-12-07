@@ -108,6 +108,9 @@ const useApiRequest = () => {
         // fallback navigate anyway but warn in console
         // eslint-disable-next-line no-console
         console.warn("Login succeeded but auth.user was not set in store before navigation. Proceeding to /stock anyway.")
+        // show current auth state for debugging
+        // eslint-disable-next-line no-console
+        console.log("login: store.auth before navigate:", store.getState().auth)
         navigate("/stock")
       }
       return true
