@@ -145,3 +145,6 @@ dist
 .env-sample
 # Ignore client environment file
 client/.env
+
+.history
+.history/
