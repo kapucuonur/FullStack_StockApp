@@ -1,14 +1,15 @@
 "use strict";
 require("express-async-errors");
-const PORT = 10000;
 require("dotenv").config();
+// Use the port provided by the host (Render sets PORT env). Fall back to 10000 for local dev.
+const PORT = process.env.PORT || 10000;
 const express = require("express");
 const path = require("node:path");
 const punycode = require('punycode'); // npm package
 
 const app = express();
 
-const { dbConnection } = require("./src/configs/dbConnection");
+const { dbConnection, mongoose } = require("./src/configs/dbConnection");
 dbConnection();
 
 // ✅ TEST için: Database'de kullanıcı kontrolü ve oluşturma
