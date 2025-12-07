@@ -67,4 +67,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on PORT ${PORT}...`);
 });
 
-// require('./src/helpers/sync')() // !!! It clear database.
+//require('./src/helpers/sync')() // !!! It clear database.

@@ -10,7 +10,8 @@
     "server": "nodemon index",
     "seed": "node src/scripts/seedDatabase.js",
     "setup-production": "npm i && cd client && npm i && npm run build && npm run rename1",
-    "dev": "node swaggerAutogen && nodemon index.js"
+    "dev": "node swaggerAutogen && nodemon index.js",
+     "sync": "node ./src/helpers/sync.js"
   },
   "keywords": [],
   "author": "CourseName",
