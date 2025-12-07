@@ -25,30 +25,35 @@ const useApiRequest = () => {
 
     dispatch(fetchStart())
     try {
-      // const { data } = await axios.post(
-      //   `${process.env.REACT_APP_BASE_URL}/auth/login`,
-      //   userData
-      // )
-      const { data } = await axiosPublic.post("/auth/login/", userData)
-      dispatch(loginSuccess(data))
+      // prefer full response for diagnostics
+      const response = await axiosPublic.post("/auth/login/", userData)
+      const data = response?.data ?? response
 
-      // log payload to help debugging in production
+      // If server nested response inside `data.data`, unwrap it
+      const payload = data?.data ?? data
+
+      // dispatch the payload to reducer
+      dispatch(loginSuccess(payload))
+
+      // log status and payload to help debugging in production
       // eslint-disable-next-line no-console
-      console.log("login: server payload:", data)
+      console.log("login: server response.status:", response?.status)
+      // eslint-disable-next-line no-console
+      console.log("login: server payload:", payload)
 
       // Small debug toast: show payload user and store user for quick verification.
       // Do not expose full tokens — only show username and token length for safety.
       try {
-        const payloadUser = data?.user?.username || data?.user || data?.username || "(no-user)"
-        const tokenValue = data?.token || data?.bearer?.accessToken || ""
+        const payloadUser = payload?.user?.username || payload?.user || payload?.username || "(no-user)"
+        const tokenValue = payload?.token || payload?.bearer?.accessToken || ""
         const tokenInfo = tokenValue ? `tokenLen=${tokenValue.length}` : "no-token"
         // show a short non-sensitive debug toast
-        // eslint-disable-next-line no-unused-expressions
-        typeof toastSuccessNotify === 'function' && toastSuccessNotify(`DEBUG: payloadUser=${payloadUser} ${tokenInfo}`)
+        typeof toastSuccessNotify === "function" &&
+          toastSuccessNotify(`DEBUG: payloadUser=${payloadUser} ${tokenInfo}`)
       } catch (e) {
         // ignore toast errors
         // eslint-disable-next-line no-console
-        console.debug('toast debug failed', e)
+        console.debug("toast debug failed", e)
       }
 
       // Wait briefly for reducer/persist updates (small retry loop) before navigating.
