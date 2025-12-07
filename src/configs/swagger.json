@@ -40,7 +40,7 @@
     "application/json"
   ],
   "paths": {
-    "/auth/login": {
+    "/api/v1/auth/login": {
       "post": {
         "tags": [
           "Authentication"
@@ -68,33 +68,62 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
-    "/auth/refresh": {
+    "/api/v1/auth/refresh": {
       "post": {
-        "description": "",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "JWT: Refresh",
+        "description": "Refresh access-token by refresh-token.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bearer": {
+                  "type": "object",
+                  "properties": {
+                    "refresh": {
+                      "type": "string",
+                      "example": "___refreshToken___"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
-    "/auth/logout": {
+    "/api/v1/auth/logout": {
       "get": {
-        "description": "",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Token: Logout",
+        "description": "Delete token-key.",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
-    "/users/": {
+    "/api/v1/users/": {
       "get": {
         "tags": [
           "Users"
@@ -152,7 +181,7 @@
         }
       }
     },
-    "/users/{id}": {
+    "/api/v1/users/{id}": {
       "get": {
         "tags": [
           "Users"
@@ -297,7 +326,7 @@
         }
       }
     },
-    "/brands/": {
+    "/api/v1/brands/": {
       "get": {
         "tags": [
           "Brands"
@@ -333,7 +362,7 @@
         }
       }
     },
-    "/brands/{id}": {
+    "/api/v1/brands/{id}": {
       "get": {
         "tags": [
           "Brands"
@@ -434,7 +463,7 @@
         }
       }
     },
-    "/categories/": {
+    "/api/v1/categories/": {
       "get": {
         "tags": [
           "Categorys"
@@ -470,7 +499,7 @@
         }
       }
     },
-    "/categories/{id}": {
+    "/api/v1/categories/{id}": {
       "get": {
         "tags": [
           "Categorys"
@@ -571,7 +600,7 @@
         }
       }
     },
-    "/firms/": {
+    "/api/v1/firms/": {
       "get": {
         "tags": [
           "Firms"
@@ -607,7 +636,7 @@
         }
       }
     },
-    "/firms/{id}": {
+    "/api/v1/firms/{id}": {
       "get": {
         "tags": [
           "Firms"
@@ -708,7 +737,7 @@
         }
       }
     },
-    "/products/": {
+    "/api/v1/products/": {
       "get": {
         "tags": [
           "Products"
@@ -744,7 +773,7 @@
         }
       }
     },
-    "/products/{id}": {
+    "/api/v1/products/{id}": {
       "get": {
         "tags": [
           "Products"
@@ -845,7 +874,7 @@
         }
       }
     },
-    "/purchases/": {
+    "/api/v1/purchases/": {
       "get": {
         "tags": [
           "Purchases"
@@ -881,7 +910,7 @@
         }
       }
     },
-    "/purchases/{id}": {
+    "/api/v1/purchases/{id}": {
       "get": {
         "tags": [
           "Purchases"
@@ -982,7 +1011,7 @@
         }
       }
     },
-    "/sales/": {
+    "/api/v1/sales/": {
       "get": {
         "tags": [
           "Sales"
@@ -1018,7 +1047,7 @@
         }
       }
     },
-    "/sales/{id}": {
+    "/api/v1/sales/{id}": {
       "get": {
         "tags": [
           "Sales"
