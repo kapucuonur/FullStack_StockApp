@@ -17,7 +17,8 @@ const useStockRequest = () => {
     dispatch(fetchStart())
     try {
       const { data } = await axiosToken.get(`/${path}`)
-      const stockData = data.data
+      // ✅ hem { data: [...] } hem doğrudan array için güvenli
+      const stockData = data?.data || data
       dispatch(getStockSuccess({ stockData, path }))
     } catch (error) {
       toastErrorNotify(`${path} verileri çekilememiştir.`)
@@ -78,10 +79,11 @@ const useStockRequest = () => {
         axiosToken.get("/brands"),
         axiosToken.get("/firms"),
       ])
-      const products = pro?.data?.data
-      const purchases = pur?.data?.data
-      const brands = bra?.data?.data
-      const firms = fir?.data?.data
+
+      const products = pro?.data?.data || pro?.data
+      const purchases = pur?.data?.data || pur?.data
+      const brands = bra?.data?.data || bra?.data
+      const firms = fir?.data?.data || fir?.data
 
       dispatch(getProPurBraFirmSuccess({ products, purchases, brands, firms }))
     } catch (error) {
