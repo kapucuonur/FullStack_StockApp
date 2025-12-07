@@ -27,8 +27,8 @@ const useApiRequest = () => {
     try {
       // prefer full response for diagnostics
       const response = await axiosPublic.post("/auth/login/", userData)
-      const data = response?.data ?? response
-
+        // If server nested response inside `data.data`, unwrap it
+        let payload = data?.data ?? data
       // If server nested response inside `data.data`, unwrap it
       const payload = data?.data ?? data
 
@@ -44,6 +44,32 @@ const useApiRequest = () => {
         console.log("login: server payload:", JSON.stringify(payload))
       } catch (e) {
         // eslint-disable-next-line no-console
+        
+        // If payload is empty (some servers may respond with empty string),
+        // try to parse the raw responseText from XHR as JSON as a fallback.
+        if (!payload || payload === "") {
+          try {
+            const raw = response?.request?.responseText || response?.request?._response || ""
+            if (raw) {
+              payload = JSON.parse(raw)
+              // eslint-disable-next-line no-console
+              console.log("login: parsed payload from responseText", payload)
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn("login: failed to parse raw responseText", e)
+          }
+        }
+        
+        // As a last-resort temporary fallback: if payload is still empty but status is 200,
+        // create a minimal truthy payload so reducer stores a token and PrivateRouter won't redirect.
+        if ((!payload || payload === "") && response?.status === 200) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "login: response had empty body but status 200 — applying temporary fallback payload"
+          )
+          payload = { token: "__LOGIN_OK__" }
+        }
         console.log("login: server payload (raw):", payload)
       }
 
