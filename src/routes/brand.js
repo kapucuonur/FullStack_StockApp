@@ -1,18 +1,18 @@
-const express = require("express")
-const router = express.Router()
-const brandController = require("../controllers/brand")
-const { authentication, isAdmin, isStaff } = require("../middlewares/auth")
+"use strict"
+const router = require("express").Router()
+const brand = require("../controllers/brand")
+const permissions = require("../middlewares/permissions")
 
-// Everyone can see
-router.get("/", authentication, brandController.list)
+// URL: /brands
 
-// Admin can create
-router.post("/", authentication, isAdmin, brandController.create)
+router.route("/")
+    .get(brand.list)                       // herkes görebilir
+    .post(permissions.isStaff, brand.create) // staff + admin ekleyebilir
 
-// Admin or staff can update
-router.put("/:id", authentication, isStaff, brandController.update)
-
-// Only admin can delete
-router.delete("/:id", authentication, isAdmin, brandController.delete)
+router.route("/:id")
+    .get(brand.read)                       // herkes görebilir
+    .put(permissions.isStaff, brand.update) // staff + admin güncelleyebilir
+    .patch(permissions.isStaff, brand.update)
+    .delete(permissions.isAdmin, brand.delete) // sadece admin silebilir
 
 module.exports = router

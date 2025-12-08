@@ -1,11 +1,18 @@
-const express = require("express")
-const router = express.Router()
-const firmController = require("../controllers/firm")
-const { authentication, isAdmin, isAdminOrStaff } = require("../middlewares/auth")
+"use strict"
+const router = require("express").Router()
+const firm = require("../controllers/firm")
+const permissions = require("../middlewares/permissions")
 
-router.get("/", authentication, firmController.list)
-router.post("/", authentication, isAdmin, firmController.create)
-router.put("/:id", authentication, isAdminOrStaff, firmController.update)
-router.delete("/:id", authentication, isAdmin, firmController.delete)
+// URL: /firms
+
+router.route("/")
+    .get(firm.list)
+    .post(permissions.isStaff, firm.create)
+
+router.route("/:id")
+    .get(firm.read)
+    .put(permissions.isStaff, firm.update)
+    .patch(permissions.isStaff, firm.update)
+    .delete(permissions.isAdmin, firm.delete)
 
 module.exports = router

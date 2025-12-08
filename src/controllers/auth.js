@@ -30,57 +30,59 @@ module.exports = {
   },
 
   // LOGIN
-  login: async (req, res) => {
-    try {
-      const { username, email, password } = req.body;
+login: async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
 
-      if (!(username || email) || !password) {
-        return res.status(400).json({ error: true, message: "Please enter username/email and password." });
-      }
-
-      const user = await User.findOne({ $or: [{ email }, { username }] });
-      if (!user) {
-        return res.status(401).json({ error: true, message: "User not found." });
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ error: true, message: "Wrong username/email or password." });
-      }
-
-      if (!user.isActive) {
-        return res.status(401).json({ error: true, message: "This account is not active." });
-      }
-
-      // ✅ JWT üret (rol bilgilerini ekledik)
-      const accessToken = jwt.sign(
-        {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          isActive: user.isActive,
-          isStaff: user.isStaff,
-          isAdmin: user.isAdmin,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "30m" }
-      );
-
-      const refreshToken = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "3d" }
-      );
-
-      return res.status(200).json({
-        error: false,
-        bearer: { accessToken, refreshToken },
-        user,
-      });
-    } catch (err) {
-      return res.status(500).json({ error: true, message: "Login failed" });
+    if (!(username || email) || !password) {
+      return res.status(400).json({ error: true, message: "Please enter username/email and password." });
     }
-  },
+
+    const user = await User.findOne({ $or: [{ email }, { username }] });
+    if (!user) {
+      return res.status(401).json({ error: true, message: "User not found." });
+    }
+
+    // ✅ Model methodunu kullan
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ error: true, message: "Wrong username/email or password." });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({ error: true, message: "This account is not active." });
+    }
+
+    // ✅ JWT üret (rol bilgilerini ekledik)
+    const accessToken = jwt.sign(
+      {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        isActive: user.isActive,
+        isStaff: user.isStaff,
+        isAdmin: user.isAdmin,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "30m" }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "3d" }
+    );
+
+    return res.status(200).json({
+      error: false,
+      bearer: { accessToken, refreshToken },
+      user,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: true, message: "Login failed" });
+  }
+},
+
 
   // REFRESH
   refresh: async (req, res) => {

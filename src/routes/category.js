@@ -1,28 +1,18 @@
 "use strict"
-/* -------------------------------------------------------
-    | FULLSTACK TEAM | NODEJS / EXPRESS |
-------------------------------------------------------- */
-const router = require('express').Router()
-/* ------------------------------------------------------- */
-// routes/category:
+const router = require("express").Router()
+const category = require("../controllers/category")
+const permissions = require("../middlewares/permissions")
 
-const category = require('../controllers/category')
-const permissions = require('../middlewares/permissions')
+// URL: /categories
 
-// URL: /categorys
-
-router.use(permissions.isAdmin)
-
-router.route('/')
+router.route("/")
     .get(category.list)
-    .post(category.create)
+    .post(permissions.isStaff, category.create)
 
-router.route('/:id')
+router.route("/:id")
     .get(category.read)
-    .put(category.update)
-    .patch(category.update)
-    .delete(category.delete)
+    .put(permissions.isStaff, category.update)
+    .patch(permissions.isStaff, category.update)
+    .delete(permissions.isAdmin, category.delete)
 
-/* ------------------------------------------------------- */
-// Exports:
 module.exports = router

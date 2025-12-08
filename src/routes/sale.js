@@ -1,18 +1,19 @@
-const express = require("express")
-const router = express.Router()
-const saleController = require("../controllers/sale")
-const { authentication, isAdminOrStaff } = require("../middlewares/auth")
+"use strict"
+const router = require("express").Router()
+const sale = require("../controllers/sale")
+const permissions = require("../middlewares/permissions")
 
-// Listeleme → sadece admin ve staff
-router.get("/", authentication, isAdminOrStaff, saleController.list)
+// URL: /sales
+// sadece staff + admin erişebilir
 
-// Ekleme → sadece admin ve staff
-router.post("/", authentication, isAdminOrStaff, saleController.create)
+router.route("/")
+    .get(permissions.isStaff, sale.list)
+    .post(permissions.isStaff, sale.create)
 
-// Güncelleme → sadece admin ve staff
-router.put("/:id", authentication, isAdminOrStaff, saleController.update)
-
-// Silme → sadece admin ve staff
-router.delete("/:id", authentication, isAdminOrStaff, saleController.delete)
+router.route("/:id")
+    .get(permissions.isStaff, sale.read)
+    .put(permissions.isStaff, sale.update)
+    .patch(permissions.isStaff, sale.update)
+    .delete(permissions.isStaff, sale.delete)
 
 module.exports = router
