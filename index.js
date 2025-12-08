@@ -38,20 +38,20 @@ app.all("/api/v1", (req, res) => {
 // Auth routes (public)
 app.use("/api/v1/auth", require("./src/routes/auth"));
 
-// Protected routes (hepsi routes/index.js içinde tanımlı)
+// Protected routes
 const authentication = require("./src/middlewares/authentication");
 app.use("/api/v1", authentication, require("./src/routes"));
 
 /* -------------------------------------------------------
    FRONTEND SERVE (opsiyonel)
 ------------------------------------------------------- */
-try {
-  const clientBuildPath = path.join(__dirname, "client/build");
-  app.use(express.static(clientBuildPath));
+const frontendPath = path.join(__dirname, "public"); // <-- client/build yerine public
+if (require("fs").existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
   app.get("*", (req, res) => {
-    res.sendFile(path.join(clientBuildPath, "index.html"));
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
-} catch (err) {
+} else {
   console.log("⚠️ Frontend build klasörü bulunamadı, sadece API çalışıyor.");
 }
 
@@ -69,6 +69,5 @@ app.use(require("./src/middlewares/errorHandler"));
 app.listen(PORT, () => {
   console.log(`🚀 Server running on PORT ${PORT}...`);
 });
-
 
 //require('./src/helpers/sync')() // !!! It clear database.
