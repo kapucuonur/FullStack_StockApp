@@ -43,12 +43,17 @@ const authentication = require("./src/middlewares/authentication");
 app.use("/api/v1", authentication, require("./src/routes"));
 
 /* -------------------------------------------------------
-   FRONTEND SERVE
+   FRONTEND SERVE (opsiyonel)
 ------------------------------------------------------- */
-app.use(express.static(path.join(__dirname, "client/build")));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
-});
+try {
+  const clientBuildPath = path.join(__dirname, "client/build");
+  app.use(express.static(clientBuildPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+} catch (err) {
+  console.log("⚠️ Frontend build klasörü bulunamadı, sadece API çalışıyor.");
+}
 
 /* -------------------------------------------------------
    ERROR HANDLER
@@ -64,3 +69,6 @@ app.use(require("./src/middlewares/errorHandler"));
 app.listen(PORT, () => {
   console.log(`🚀 Server running on PORT ${PORT}...`);
 });
+
+
+//require('./src/helpers/sync')() // !!! It clear database.
