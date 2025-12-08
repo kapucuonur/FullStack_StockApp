@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-  user: "",
+  user: null,
   token: "",
   loading: false,
   error: false,
@@ -14,37 +14,29 @@ const authSlice = createSlice({
   reducers: {
     fetchStart: (state) => {
       state.loading = true
-      state.error = false // Yeni istek başlamadan hatayı sıfırla
+      state.error = false
     },
 
     loginSuccess: (state, { payload }) => {
       state.loading = false
-
-      // Kullanıcı verisini güvenli şekilde al
-      const userData = payload?.user || payload?.data || payload
-
-      state.user = userData?.username || "" 
-      // ✅ Doğru token: bearer.accessToken
-      state.token = payload?.bearer?.accessToken || "" 
+      state.user = payload?.user || null
+      // ✅ backend response: accessToken
+      state.token = payload?.accessToken || ""
       state.error = false
     },
 
     registerSuccess: (state, { payload }) => {
       state.loading = false
-
-      const userData = payload?.data || payload?.user || payload
-
-      state.user = userData?.username || "" 
-      // ✅ Doğru token: bearer.accessToken
-      state.token = payload?.bearer?.accessToken || "" 
+      state.user = payload?.user || null
+      state.token = payload?.accessToken || ""
       state.error = false
     },
 
     logoutSuccess: (state) => {
       state.loading = false
-      state.user = ""
+      state.user = null
       state.token = ""
-      state.error = false // Başarılı çıkışta hatayı sıfırla
+      state.error = false
     },
 
     fetchFail: (state) => {
