@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const brandController = require("../controllers/brand")
-const { authentication, isAdmin, isAdminOrStaff } = require("../middlewares/auth")
+const { authentication, isAdmin, isStaff } = require("../middlewares/auth")
 
 // Everyone can see
 router.get("/", authentication, brandController.list)
@@ -10,7 +10,7 @@ router.get("/", authentication, brandController.list)
 router.post("/", authentication, isAdmin, brandController.create)
 
 // Admin or staff can update
-router.put("/:id", authentication, isAdminOrStaff, brandController.update)
+router.put("/:id", authentication, isStaff, brandController.update)
 
 // Only admin can delete
 router.delete("/:id", authentication, isAdmin, brandController.delete)
