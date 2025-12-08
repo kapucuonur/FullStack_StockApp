@@ -5,7 +5,6 @@ require("dotenv").config();
 const PORT = process.env.PORT || 10000;
 const express = require("express");
 const path = require("path");
-const punycode = require("punycode"); // npm package
 
 const app = express();
 
@@ -15,7 +14,6 @@ dbConnection();
 
 // Middleware
 app.use(express.json());
-app.use(require("./src/middlewares/authentication"));
 app.use(require("./src/middlewares/logger"));
 app.use(require("./src/middlewares/findSearchSortPage"));
 
@@ -37,16 +35,16 @@ app.all("/api/v1", (req, res) => {
   });
 });
 
-// Auth routes
+// Auth routes (public)
 app.use("/api/v1/auth", require("./src/routes/auth"));
 
-// Diğer API routes
-app.use("/api/v1", require("./src/routes"));
+// Protected routes (hepsi routes/index.js içinde tanımlı)
+const authentication = require("./src/middlewares/authentication");
+app.use("/api/v1", authentication, require("./src/routes"));
 
 /* -------------------------------------------------------
    FRONTEND SERVE
 ------------------------------------------------------- */
-// React build klasörünü serve et
 app.use(express.static(path.join(__dirname, "client/build")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client/build", "index.html"));
@@ -66,5 +64,3 @@ app.use(require("./src/middlewares/errorHandler"));
 app.listen(PORT, () => {
   console.log(`🚀 Server running on PORT ${PORT}...`);
 });
-
-//require('./src/helpers/sync')() // !!! It clear database.

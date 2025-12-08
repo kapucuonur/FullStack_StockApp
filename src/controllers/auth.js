@@ -52,9 +52,25 @@ module.exports = {
         return res.status(401).json({ error: true, message: "This account is not active." });
       }
 
-      // ✅ JWT üret
-      const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_KEY, { expiresIn: "30m" });
-      const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_KEY, { expiresIn: "3d" });
+      // ✅ JWT üret (rol bilgilerini ekledik)
+      const accessToken = jwt.sign(
+        {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          isActive: user.isActive,
+          isStaff: user.isStaff,
+          isAdmin: user.isAdmin,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "30m" }
+      );
+
+      const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "3d" }
+      );
 
       return res.status(200).json({
         error: false,
@@ -73,7 +89,7 @@ module.exports = {
       return res.status(400).json({ error: true, message: "Please provide refreshToken." });
     }
 
-    jwt.verify(refreshToken, process.env.REFRESH_KEY, async (err, decoded) => {
+    jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
       if (err) return res.status(401).json({ error: true, message: "Invalid refresh token." });
 
       const user = await User.findById(decoded.id);
@@ -81,7 +97,19 @@ module.exports = {
         return res.status(401).json({ error: true, message: "User not found or inactive." });
       }
 
-      const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_KEY, { expiresIn: "30m" });
+      const accessToken = jwt.sign(
+        {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          isActive: user.isActive,
+          isStaff: user.isStaff,
+          isAdmin: user.isAdmin,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "30m" }
+      );
+
       return res.json({ error: false, bearer: { accessToken } });
     });
   },
