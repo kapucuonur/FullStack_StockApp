@@ -1,28 +1,11 @@
-"use strict"
-/* -------------------------------------------------------
-    | FULLSTACK TEAM | NODEJS / EXPRESS |
-------------------------------------------------------- */
-const router = require('express').Router()
-/* ------------------------------------------------------- */
-// routes/firm:
+const express = require("express")
+const router = express.Router()
+const firmController = require("../controllers/firm")
+const { authentication, isAdmin, isAdminOrStaff } = require("../middlewares/auth")
 
-const firm = require('../controllers/firm')
-const permissions = require('../middlewares/permissions')
+router.get("/", authentication, firmController.list)
+router.post("/", authentication, isAdmin, firmController.create)
+router.put("/:id", authentication, isAdminOrStaff, firmController.update)
+router.delete("/:id", authentication, isAdmin, firmController.delete)
 
-// URL: /firms
-
-router.use(permissions.isAdmin)
-
-router.route('/')
-    .get(firm.list)
-    .post(firm.create)
-
-router.route('/:id')
-    .get(firm.read)
-    .put(firm.update)
-    .patch(firm.update)
-    .delete(firm.delete)
-
-/* ------------------------------------------------------- */
-// Exports:
 module.exports = router

@@ -1,26 +1,18 @@
-"use strict"
-/* -------------------------------------------------------
-    | FULLSTACK TEAM | NODEJS / EXPRESS |
-------------------------------------------------------- */
-const router = require('express').Router()
-/* ------------------------------------------------------- */
-// routes/sale:
+const express = require("express")
+const router = express.Router()
+const saleController = require("../controllers/sale")
+const { authentication, isAdminOrStaff } = require("../middlewares/auth")
 
-const sale = require('../controllers/sale')
-const permissions = require('../middlewares/permissions')
+// Listeleme → sadece admin ve staff
+router.get("/", authentication, isAdminOrStaff, saleController.list)
 
-// URL: /sales
+// Ekleme → sadece admin ve staff
+router.post("/", authentication, isAdminOrStaff, saleController.create)
 
-router.route('/')
-    .get(permissions.isLogin, sale.list)
-    .post(permissions.isLogin, sale.create)
+// Güncelleme → sadece admin ve staff
+router.put("/:id", authentication, isAdminOrStaff, saleController.update)
 
-router.route('/:id')
-    .get(permissions.isLogin, sale.read)
-    .put(permissions.isStaff, sale.update)
-    .patch(permissions.isStaff, sale.update)
-    .delete(permissions.isStaff, sale.delete)
+// Silme → sadece admin ve staff
+router.delete("/:id", authentication, isAdminOrStaff, saleController.delete)
 
-/* ------------------------------------------------------- */
-// Exports:
 module.exports = router

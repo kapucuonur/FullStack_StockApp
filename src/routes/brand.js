@@ -1,28 +1,18 @@
-"use strict"
-/* -------------------------------------------------------
-    | FULLSTACK TEAM | NODEJS / EXPRESS |
-------------------------------------------------------- */
-const router = require('express').Router()
-/* ------------------------------------------------------- */
-// routes/brand:
+const express = require("express")
+const router = express.Router()
+const brandController = require("../controllers/brand")
+const { authentication, isAdmin, isAdminOrStaff } = require("../middlewares/auth")
 
-const brand = require('../controllers/brand')
-const permissions = require('../middlewares/permissions')
+// Everyone can see
+router.get("/", authentication, brandController.list)
 
-// URL: /brands
+// Admin can create
+router.post("/", authentication, isAdmin, brandController.create)
 
-router.use(permissions.isAdmin)
+// Admin or staff can update
+router.put("/:id", authentication, isAdminOrStaff, brandController.update)
 
-router.route('/')
-    .get(brand.list)
-    .post(brand.create)
+// Only admin can delete
+router.delete("/:id", authentication, isAdmin, brandController.delete)
 
-router.route('/:id')
-    .get(brand.read)
-    .put(brand.update)
-    .patch(brand.update)
-    .delete(brand.delete)
-
-/* ------------------------------------------------------- */
-// Exports:
 module.exports = router
