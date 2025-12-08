@@ -1,4 +1,3 @@
-// src/features/auth/authSlice.js
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
@@ -20,15 +19,15 @@ const authSlice = createSlice({
     loginSuccess: (state, { payload }) => {
       state.loading = false
       state.user = payload?.user || null
-      // ✅ backend response: accessToken
-      state.token = payload?.accessToken || ""
+      // 🔑 backend response: token
+      state.token = payload?.token || ""
       state.error = false
     },
 
     registerSuccess: (state, { payload }) => {
       state.loading = false
       state.user = payload?.user || null
-      state.token = payload?.accessToken || ""
+      state.token = payload?.token || ""
       state.error = false
     },
 
